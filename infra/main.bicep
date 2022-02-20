@@ -14,9 +14,20 @@ module kv 'key-vault.bicep' = {
   }
 }
 
+module refs 'get-kv-secrets-refs.bicep' = {
+  name: 'get-kv-secrets-refs-${appName}'
+  params: {
+    keyVaultName: kv.outputs.keyVaultName
+  }
+}
+
 module swa 'static-sites.bicep' = {
   name: 'deploy-swa-${appName}'
   params: {
+    appSettings: {
+      AAD_CLIENT_ID: refs.outputs.aadClientIdRef
+      AAD_CLIENT_SECRET: refs.outputs.aadClientSecretRef
+    }
     buildProperties: {
       skipGithubActionWorkflowGeneration: true
     }
