@@ -1,0 +1,64 @@
+name: Deploy Infra and App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+env:
+  RESOURCE_GROUP: 'rg-swa-sso'
+  RESOURCE_TAGS: '{"owner":"rick.roche", "app":"azure-swa-sso", "repo":"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" }'
+  APP_NAME: 'swa-sso'
+  LOCATION: 'westeurope'
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Infra
+        id: deploy_infra
+        if: github.event_name != 'pull_request'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az deployment group create \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --template-file ./infra/main.bicep \
+              --parameters \
+                  appName='${{ env.APP_NAME }}' \
+                  location='${{ env.LOCATION }}' \
+                  repositoryUrl='${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}' \
+                  repositoryToken='${{ secrets.WORKFLOW_TOKEN }}' \
+                  tags='${{ env.TAGS }}'
+
+      - name: Get Static Web App API Key
+        id: static_web_app_apikey
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            APIKEY=$(az staticwebapp secrets list --name 'stapp-${{ env.APP_NAME }}' | jq -r '.properties.apiKey')
+            echo "::set-output name=APIKEY::$APIKEY"
+
+      - name: Deploy WebApp to Static Web App
+        id: static_web_app_deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.static_web_app_apikey.outputs.APIKEY }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (i.e. PR comments)
+          action: 'upload'
+          # Build configuration for Azure Static Web Apps: https://aka.ms/swaworkflowconfig
+          app_location: 'webapp'
+          api_location: ''
+          output_location: 'webapp/build'
