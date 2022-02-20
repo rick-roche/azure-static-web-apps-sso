@@ -23,3 +23,6 @@ module swa 'static-sites.bicep' = {
     tags: tags
   }
 }
+
+output siteName string = swa.outputs.siteName
+output siteDefaultHostname string = swa.outputs.defaultHostName
