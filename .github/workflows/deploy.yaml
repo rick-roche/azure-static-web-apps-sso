@@ -67,4 +67,4 @@ jobs:
           # Build configuration for Azure Static Web Apps: https://aka.ms/swaworkflowconfig
           app_location: 'webapp'
           api_location: ''
-          output_location: 'build'
+          output_location: 'build' # relative to app_location
