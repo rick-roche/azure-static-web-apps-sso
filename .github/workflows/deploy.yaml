@@ -11,7 +11,7 @@ on:
 
 env:
   RESOURCE_GROUP: 'rg-swa-sso'
-  RESOURCE_TAGS: '{"owner":"rick.roche", "app":"azure-swa-sso", "repo":"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" }'
+  RESOURCE_TAGS: '{"owner":"rick.roche", "app":"azure-swa-sso", "repo":"https://github.com/rick-roche/azure-static-web-apps-sso" }'
   APP_NAME: 'swa-sso'
   LOCATION: 'westeurope'
 
@@ -39,7 +39,7 @@ jobs:
               --parameters \
                   appName='${{ env.APP_NAME }}' \
                   location='${{ env.LOCATION }}' \
-                  repositoryUrl='${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}' \
+                  repositoryUrl='https://github.com/rick-roche/azure-static-web-apps-sso' \
                   repositoryToken='${{ secrets.WORKFLOW_TOKEN }}' \
                   tags='${{ env.TAGS }}'
 
