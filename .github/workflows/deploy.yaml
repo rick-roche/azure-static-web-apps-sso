@@ -45,6 +45,7 @@ jobs:
 
       - name: Get Static Web App API Key
         id: static_web_app_apikey
+        if: github.event_name != 'pull_request'
         uses: azure/CLI@v1
         with:
           inlineScript: |
@@ -53,6 +54,7 @@ jobs:
 
       - name: Deploy WebApp to Static Web App
         id: static_web_app_deploy
+        if: github.event_name != 'pull_request'
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ steps.static_web_app_apikey.outputs.APIKEY }}
