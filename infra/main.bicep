@@ -4,8 +4,18 @@ param repositoryUrl string
 param repositoryToken string
 param tags object
 
+module kv 'key-vault.bicep' = {
+  name: 'deploy-kv-${appName}'
+  params: {
+    enableSoftDelete: false
+    keyVaultName: 'kv-${appName}'
+    location: location
+    tags: tags
+  }
+}
+
 module swa 'static-sites.bicep' = {
-  name: 'swa-${appName}'
+  name: 'deploy-swa-${appName}'
   params: {
     buildProperties: {
       skipGithubActionWorkflowGeneration: true
@@ -24,5 +34,6 @@ module swa 'static-sites.bicep' = {
   }
 }
 
+output keyVaultName string = kv.outputs.keyVaultName
 output siteName string = swa.outputs.siteName
 output siteDefaultHostname string = swa.outputs.defaultHostName
