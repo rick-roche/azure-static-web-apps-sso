@@ -41,7 +41,7 @@ jobs:
                   location='${{ env.LOCATION }}' \
                   repositoryUrl='https://github.com/rick-roche/azure-static-web-apps-sso' \
                   repositoryToken='${{ secrets.WORKFLOW_TOKEN }}' \
-                  tags='${{ env.TAGS }}'
+                  tags='${{ env.RESOURCE_TAGS }}'
 
       - name: Get Static Web App API Key
         id: static_web_app_apikey
