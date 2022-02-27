@@ -19,6 +19,17 @@ param enableSoftDelete bool = true
 @description('Soft delete retention period.')
 param softDeleteRetentionInDays int =  7
 
+@description('An array of role assignment objects. Format: [{ roleDefinitionId: xxx, principalType: xxx, principalId: xxx }]')
+param roleAssignments array
+// E.g.
+// [
+//   {
+//     roleDefinitionId: 'replace'
+//     principalType: 'replace'
+//     principalId: 'replace'
+//   }
+// ]
+
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: keyVaultName
   location: location
@@ -39,6 +50,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     }
   }
 }
+
+resource keyVaultRoleAssignments 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = [for role in roleAssignments: {
+  name: guid(keyVault.name, role.roleDefinitionId, role.principalId)
+  scope: keyVault
+  properties: {
+    principalType: role.principalType
+    roleDefinitionId: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${role.roleDefinitionId}'
+    principalId: role.principalId
+  }
+}]
 
 output keyVaultName string = keyVault.name
 output keyVaultResourceId string = keyVault.id

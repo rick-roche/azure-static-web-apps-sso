@@ -4,20 +4,12 @@ param repositoryUrl string
 param repositoryToken string
 param tags object
 
-module kv 'key-vault.bicep' = {
-  name: 'deploy-kv-${appName}'
-  params: {
-    enableSoftDelete: false
-    keyVaultName: 'kv-${appName}'
-    location: location
-    tags: tags
-  }
-}
+var keyVaultName = 'kv-${appName}'
 
 module refs 'get-kv-secrets-refs.bicep' = {
   name: 'get-kv-secrets-refs-${appName}'
   params: {
-    keyVaultName: kv.outputs.keyVaultName
+    keyVaultName: keyVaultName
   }
 }
 
@@ -41,6 +33,26 @@ module swa 'static-sites.bicep' = {
     }
     stagingEnvironmentPolicy: 'Enabled'
     staticSiteName: 'stapp-${appName}'
+    tags: tags
+  }
+}
+
+// https://docs.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli#azure-built-in-roles-for-key-vault-data-plane-operations
+var keyVaultSecretsUserRole = '4633458b-17de-408a-b874-0445c86b69e6'
+
+module kv 'key-vault.bicep' = {
+  name: 'deploy-kv-${appName}'
+  params: {
+    enableSoftDelete: false
+    keyVaultName: keyVaultName
+    location: location
+    roleAssignments: [
+      {
+        roleDefinitionId: keyVaultSecretsUserRole
+        principalType: 'ServicePrincipal'
+        principalId: swa.outputs.siteSystemAssignedIdentityId
+      }
+    ]
     tags: tags
   }
 }
