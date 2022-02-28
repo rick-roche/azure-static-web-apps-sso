@@ -1,0 +1,28 @@
+@startuml container-web-app
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define AzurePuml https://raw.githubusercontent.com/plantuml-stdlib/Azure-PlantUML/master/dist
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/AzureC4Integration.puml
+!includeurl AzurePuml/Identity/AzureAppRegistration.puml
+!includeurl AzurePuml/Security/AzureKeyVault.puml
+!includeurl AzurePuml/Web/AzureWebApp.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(personInternal, "Internal User", "Browses web app private to a tenant")
+
+System_Boundary(boundaryInternal, "Internal Web App") {
+    Container(swa, "Static Web App", "Azure Static Web App, Svelte", "Serves static content", "AzureWebApp")
+    Container(kv, "Key Vault", "Azure Key Vault", "Stores secrets", "AzureKeyVault")
+    Container(aad, "AAD App", "Azure AD App Registration", "Provides identity", "AzureAppRegistration")
+}
+
+Rel(personInternal, swa, "browses", "HTML/CSS/JS/HTTPS")
+Rel(swa, kv, "retrieves secrets", "HTTPS")
+Rel(swa, aad, "authenticates and authorises", "HTTPS")
+
+SHOW_LEGEND()
+
+@enduml

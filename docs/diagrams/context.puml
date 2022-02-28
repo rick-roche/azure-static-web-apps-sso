@@ -1,0 +1,13 @@
+@startuml context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(personInternal, "Internal User", "Browses web app private to a tenant")
+System(systemInternal, "Internal Web App", "Web app private to a tenant")
+
+Rel(personInternal, systemInternal, "browses")
+
+SHOW_LEGEND()
+@enduml
