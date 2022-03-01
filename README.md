@@ -15,8 +15,8 @@ Technologies used
 
 ## Context
 
-![context image](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/rick-roche/azure-static-web-apps-sso/main/docs/diagrams/context.puml "Context")
+![c4 context](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/rick-roche/azure-static-web-apps-sso/main/docs/diagrams/context.puml "Context")
 
 ## Internal Web App Containers
 
-![context image](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/rick-roche/azure-static-web-apps-sso/main/docs/diagrams/container-webapp.puml "Internal Web App")
+![c4 container](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/rick-roche/azure-static-web-apps-sso/main/docs/diagrams/container-webapp.puml "Internal Web App")
